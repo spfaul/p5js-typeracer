@@ -150,7 +150,7 @@ function drawMenu() {
 												`Typo Count: ${highScoreAttempt.typoCount}\n` +
 												`WPM: ${highScoreAttempt.wpm.toFixed(2)}`;
 		textAlign(LEFT);
-		text(highScoreAttemptStats, 700, 50, 300, 400);		
+		text(highScoreAttemptStats, 800, 50, 300, 400);		
 	}
 
 }
@@ -181,6 +181,7 @@ function drawRace() {
 
 	// timer
 	fill(color("#F2F7A1"));
+	textAlign(CENTER, TOP);
 	text(`Time elapsed: ${((new Date() - startTime)/1000).toFixed(2)}s\n` +
 				`Typo Count: ${gameAttempt.typoCount}\n`
 					, 0, 0, 1000, 300);
