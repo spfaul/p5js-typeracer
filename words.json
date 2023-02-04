@@ -1,6 +1,3 @@
-// Various primitive types from popular languages
-// Currently only has C, Python, Typescript and Rust.
-// This is all I could come up with from memory. I surely missed out some.
 {
   "words": {
     "int",
