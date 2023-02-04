@@ -106,8 +106,17 @@ class Button {
 			fill(this.opts.defaultColor);
 		else
 			fill(color(240,240,240));
-
-		if (isHover && mouseIsPressed && mouseButton === LEFT)
+		let isClick = (mouseIsPressed && mouseButton === LEFT);
+		let isTouch = false;
+		for (let i=0; i<touches.length; i++) {
+			if (touches[i][0] > this.x && touches[i][0] < this.x + this.w
+				&&
+				touches[i][1] > this.y && touches[i][1] < this.y + this.h) {
+				isTouch = true;
+				break;
+			}
+		}
+		if ((isHover && isClick) || isTouch)
 			this.onPress();
 		
 		rect(this.x, this.y, this.w, this.h, 20);
