@@ -26,7 +26,8 @@ if (localStorage.getItem("highscore") === null) {
 
 function preload() {
 	// fetch our wordlist in preload since loadJSON is async
-	goalStrDictionary = loadJSON("https://raw.githubusercontent.com/monkeytypegame/monkeytype/master/frontend/static/languages/english_1k.json");
+	// goalStrDictionary = loadJSON("https://raw.githubusercontent.com/monkeytypegame/monkeytype/master/frontend/static/languages/english_1k.json");
+	goalStrDictionary = loadJSON("https://raw.githubusercontent.com/spfaul/p5js-typeracer/master/words.json");
 }
 
 function setup() {
@@ -169,11 +170,14 @@ function drawRace() {
 
 	// text progress + error chars
 	textSize(35);
-	textAlign(CENTER, TOP);
+	textAlign(LEFT, TOP);
 	fill(color("#46C2CB"));
-	text(goalStr, 100, 300, 1000-200, 300);
-	fill(color(200, 10, 10));
-	text(typoStr.substring(typoStr.length-MAX_TYPO_CHARS_DISPLAY, typoStr.length), 100, 250, 1000-200, 50);
+	text("> "+goalStr, 100, 300, 1000-200, 300);
+	if (typoStr.length) {
+		fill(color(200, 10, 10, 100));
+		let windowedStr = typoStr.substring(typoStr.length-MAX_TYPO_CHARS_DISPLAY, typoStr.length);
+		text(windowedStr+" <", 100, 250, 1000-200, 50);
+	}
 
 	// timer
 	fill(color("#F2F7A1"));
