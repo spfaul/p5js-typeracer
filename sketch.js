@@ -50,7 +50,12 @@ function game_preinit() {
 	for (i=0; i<10; i++)
 		tmpWordArr.push(goalStrDictionary.words[Math.floor(Math.random()*goalStrDictionary.words.length)]);
 	goalStr = tmpWordArr.join(" ");
-	gameAttempt.prompt = goalStr;
+	gameAttempt = {
+		typoCount: 0,
+		secsElapsed: null,
+		wpm: null,
+		prompt: goalStr
+	};
 	goalStrLen = goalStr.length;
 	startTime = new Date();
 }
@@ -150,7 +155,7 @@ function drawMenu() {
 												`Typo Count: ${highScoreAttempt.typoCount}\n` +
 												`WPM: ${highScoreAttempt.wpm.toFixed(2)}`;
 		textAlign(LEFT);
-		text(highScoreAttemptStats, 800, 50, 300, 400);		
+		text(highScoreAttemptStats, 700, 50, 300, 400);		
 	}
 
 }
