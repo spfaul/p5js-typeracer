@@ -139,6 +139,15 @@ class Button {
 function drawMenu() {
 	background(color("#453C67"));
 	startBtn.update();
+
+	push();
+	textSize(60);
+	textStyle(BOLD);
+	textAlign(CENTER, TOP);
+	fill(color(172, 168, 255));
+	text("Type Racer, Literally.", 0, 0, 1000, 100);
+	pop();
+
 	if (gameAttempt.secsElapsed) {
 		fill(color("#F2F7A1"));
 		prevAttemptStats = "Attempt Stats\n\n\n" +
