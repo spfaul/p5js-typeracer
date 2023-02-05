@@ -150,7 +150,7 @@ function drawMenu() {
 												`Typo Count: ${highScoreAttempt.typoCount}\n` +
 												`WPM: ${highScoreAttempt.wpm.toFixed(2)}`;
 		textAlign(LEFT);
-		text(highScoreAttemptStats, 800, 50, 300, 400);		
+		text(highScoreAttemptStats, 700, 50, 300, 400);		
 	}
 
 }
