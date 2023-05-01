@@ -6,9 +6,11 @@ const gameStates = Object.freeze({
 var currGameState = gameStates.START_MENU;
 var goalStr, goalStrLen;
 var goalStrDictionary;
+var flying_letters = [];
+var showFallingLetters = true;
 var typoStr = ""; // to be displayed to user
 const MAX_TYPO_CHARS_DISPLAY = 30; // typo string has scrolling effect to accomadate indefinite error length
-var startBtn;
+var startBtn, particleToggleBtn;
 var startTime;
 var gameAttempt = {
 	typoCount: 0,
@@ -30,6 +32,11 @@ function preload() {
 	goalStrDictionary = loadJSON("https://raw.githubusercontent.com/spfaul/p5js-typeracer/master/words.json");
 }
 
+function toggleParticles() {
+	showFallingLetters = !showFallingLetters;
+	particleToggleBtn.opts.text = "Particles: " + (showFallingLetters ? "On" : "Off");
+}
+
 function setup() {
 	createCanvas(1000, 600);
 	textFont("Fira Sans", 24); // added in HTML
@@ -42,6 +49,15 @@ function setup() {
 			hoverColor: color(200,100,100)
 		}
 	);
+	particleToggleBtn = new Button(
+		400, 400, 1000-800, 50,
+		toggleParticles,
+		{
+			text: "Particles: " + (showFallingLetters ? "On" : "Off"),
+			textSize: 30,
+			hoverColor: color(200,100,100)
+		}
+	)
 }
 
 function game_preinit() {
@@ -84,12 +100,45 @@ function keyTyped(keyEvent) {
 		}
 
 		if (keyEvent.key === goalStr[0]) {
+			if (showFallingLetters) {
+				flying_letters.push(
+					new LetterProjectile(
+						goalStr[0],
+		      	createVector(120, 320),
+			      createVector(random(-1,1), random(-1,1))
+		      )
+				)
+			}	
 			goalStr = goalStr.substring(1);
 			return;
 		}
 
 		gameAttempt.typoCount += 1;
 		typoStr += keyEvent.key; 
+}
+
+class LetterProjectile {
+	constructor(letter, pos, vel) {
+		this.letter = letter;
+		this.pos = pos;
+		this.vel = vel
+	}
+
+	update() {
+		this.vel.add(createVector(0,.3))
+		this.pos.add(this.vel)
+		if (this.pos.y > height) return false
+		return true
+	}
+
+	draw() {
+		push()
+		textSize(35);
+		textAlign(LEFT, TOP);
+		fill(color(67, 184, 192, 255 * (1 - this.pos.y / height)));
+		text(this.letter, this.pos.x, this.pos.y)
+		pop()
+	}
 }
 
 class Button {
@@ -100,6 +149,7 @@ class Button {
 		this.h = h;
 		this.onPress = onPress;
 		this.opts = opts;
+		this.prevClick = false;
 	}
 
 	update() {
@@ -113,17 +163,12 @@ class Button {
 		else
 			fill(color(240,240,240));
 		let isClick = (mouseIsPressed && mouseButton === LEFT);
-		let isTouch = false;
-		for (let i=0; i<touches.length; i++) {
-			if (touches[i][0] > this.x && touches[i][0] < this.x + this.w
-				&&
-				touches[i][1] > this.y && touches[i][1] < this.y + this.h) {
-				isTouch = true;
-				break;
-			}
-		}
-		if ((isHover && isClick) || isTouch)
+		if (!isClick) this.prevClick = false
+		if (isHover && isClick && !this.prevClick) {
+			this.prevClick = true;
 			this.onPress();
+		}
+		this.prevClick = isHover && isClick
 		
 		rect(this.x, this.y, this.w, this.h, 20);
 
@@ -139,6 +184,7 @@ class Button {
 function drawMenu() {
 	background(color("#453C67"));
 	startBtn.update();
+	particleToggleBtn.update()
 
 	push();
 	textSize(60);
@@ -169,6 +215,7 @@ function drawMenu() {
 
 }
 
+let unfinished_percentage = 1;
 function drawRace() {
 	if (goalStr.length === 0) {
 		endGame();
@@ -176,7 +223,12 @@ function drawRace() {
 	}
 	background(color("#453C67"));
 	// prog bar
-	let unfinished_percentage = goalStr.length / goalStrLen; 
+	if (unfinished_percentage > goalStr.length / goalStrLen) {
+		unfinished_percentage -= (unfinished_percentage - (goalStr.length / goalStrLen)) / 10
+	} else {
+		unfinished_percentage = goalStr.length / goalStrLen
+	}
+
 	fill(color(10, 200, 10));
 	rect(100, 100, (1-unfinished_percentage)*(1000-200), 40);
 	fill(color("#6D67E4"));
@@ -199,6 +251,15 @@ function drawRace() {
 	text(`Time elapsed: ${((new Date() - startTime)/1000).toFixed(2)}s\n` +
 				`Typo Count: ${gameAttempt.typoCount}\n`
 					, 0, 0, 1000, 300);
+	for (let letter of Array.from(flying_letters)) {
+		let isViewable = letter.update()
+		if (!isViewable) {
+			flying_letters.splice(flying_letters.indexOf(letter), 1)
+			continue
+
+		}
+		letter.draw()
+	}
 }
 
 function endGame() {
