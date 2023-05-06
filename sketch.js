@@ -26,10 +26,15 @@ if (localStorage.getItem("highscore") === null) {
 		highScoreAttempt = JSON.parse(localStorage.getItem("highscore"));
 }
 
+var keyStrokeSound, finishSound;
 function preload() {
-	// fetch our wordlist in preload since loadJSON is async
+	// fetch our wordlist in preload to prevent visual lag during setup
 	// goalStrDictionary = loadJSON("https://raw.githubusercontent.com/monkeytypegame/monkeytype/master/frontend/static/languages/english_1k.json");
 	goalStrDictionary = loadJSON("https://raw.githubusercontent.com/spfaul/p5js-typeracer/master/words.json");
+	keyStrokeSound = loadSound("assets/keystroke.mp3")
+	keyStrokeSound.setVolume(.2);	
+	finishSound = loadSound("assets/success.mp3");
+	finishSound.setVolume(.5)
 }
 
 function toggleParticles() {
@@ -94,6 +99,10 @@ function keyPressed(kc) {
 function keyTyped(keyEvent) {
 		if (currGameState != gameStates.RACING)
 				return;
+
+		keyStrokeSound.play();
+		keyStrokeSound.jump(.2)
+
 		if (typoStr.length) {
 			typoStr += keyEvent.key;
 			return;
@@ -263,6 +272,8 @@ function drawRace() {
 }
 
 function endGame() {
+	// clear particle effects
+	flying_letters = [];
 	// calculate attempt stats and store before returning to menu
 	gameAttempt.secsElapsed = (new Date() - startTime) / 1000;
 	gameAttempt.wpm = gameAttempt.prompt.split(" ").length / (gameAttempt.secsElapsed / 60);
@@ -271,4 +282,5 @@ function endGame() {
 		localStorage.setItem("highscore", JSON.stringify(gameAttempt));
 	}
 	currGameState = gameStates.START_MENU;
+	finishSound.play()
 }
