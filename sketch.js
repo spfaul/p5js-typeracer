@@ -103,7 +103,7 @@ function keyTyped(keyEvent) {
 		keyStrokeSound.play();
 		keyStrokeSound.jump(.2)
 
-		if (typoStr.length) {
+		if (typoStr.length && keyEvent.key !== "Backspace") {
 			typoStr += keyEvent.key;
 			return;
 		}
