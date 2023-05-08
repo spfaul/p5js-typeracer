@@ -102,6 +102,9 @@ function keyTyped(keyEvent) {
 
 		keyStrokeSound.play();
 		keyStrokeSound.jump(.2)
+		
+		if (keyEvent.key.length !== 1)
+			return;
 
 		if (typoStr.length) {
 			typoStr += keyEvent.key;
