@@ -106,7 +106,7 @@ function keyTyped(keyEvent) {
 		if (keyEvent.key.length !== 1)
 			return;
 
-		if (typoStr.length) {
+		if (typoStr.length && keyEvent.key !== "Backspace") {
 			typoStr += keyEvent.key;
 			return;
 		}
